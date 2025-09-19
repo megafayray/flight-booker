@@ -16,25 +16,25 @@
   <%= form.submit "Search Flights" %>
 <% end %>
 
-<% if params[:commit].present? %>
-    <h2>Available Flights</h2>
+<% if params[:commit].present? && @flights.any? %>
+  <h2>Select a Flight</h2>
 
-    <% if @flights.any? %>
-    <ul>
-        <% @flights.each do |flight| %>
-        <li>
-            <strong><%= flight.departure_airport.code %> → <%= flight.arrival_airport.code %></strong><br>
-            Date: <%= flight.start_date %><br>
-            Time: <%= flight.start_time.strftime("%I:%M %p") %><br>
-            Duration: <%= flight.flight_duration %> minutes<br>
-            Seats requested: <%= @passengers %>
-        </li>
-        <% end %>
-    </ul>
-    <% else %>
-    <p>No flights found matching your criteria.</p>
+  <%= form_with url: new_booking_path, method: :get, local: true do |form| %>
+    <% @flights.each do |flight| %>
+      <div>
+        <%= form.radio_button :flight_id, flight.id %>
+        <%= form.label :flight_id, "#{flight.departure_airport.code} → #{flight.arrival_airport.code} on #{flight.start_date.strftime("%B %d, %Y")} at #{flight.start_time.strftime("%I:%M %p")} (#{flight.flight_duration} mins)", value: flight.id %>
+      </div>
     <% end %>
+
+    <%= form.hidden_field :passengers, value: params[:passengers] %>
+
+    <%= form.submit "Continue to Booking" %>
+  <% end %>
+<% elsif params[:commit].present? %>
+  <p>No flights found matching your criteria.</p>
 <% end %>
+
 
 <h2>All Flights:</h2>
 
