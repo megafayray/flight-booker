@@ -1,0 +1,46 @@
+<h2>Search Flights:</h2>
+
+<%= form_with url: flights_path, method: :get, local: true do |form| %>
+  <%= form.label :departure_airport_id, "From" %>
+  <%= form.select :departure_airport_id, options_from_collection_for_select(Airport.all, :id, :code, params[:departure_airport_id]), include_blank: true %>
+
+  <%= form.label :arrival_airport_id, "To" %>
+  <%= form.select :arrival_airport_id, options_from_collection_for_select(Airport.all, :id, :code, params[:arrival_airport_id]), include_blank: true %>
+
+  <%= form.label :start_date, "Date" %>
+  <%= form.select :start_date,
+        options_for_select(Flight.select(:start_date).distinct.order(:start_date).map { |f| [f.start_date.to_s, f.start_date] }, params[:start_date]), { include_blank: true } %>
+  <%= form.label :passengers, "Number of passengers" %>
+  <%= form.select :passengers, (1..4), selected: params[:passengers] %>
+
+  <%= form.submit "Search Flights" %>
+<% end %>
+
+<% if params[:commit].present? %>
+    <h2>Available Flights</h2>
+
+    <% if @flights.any? %>
+    <ul>
+        <% @flights.each do |flight| %>
+        <li>
+            <strong><%= flight.departure_airport.code %> → <%= flight.arrival_airport.code %></strong><br>
+            Date: <%= flight.start_date %><br>
+            Time: <%= flight.start_time.strftime("%I:%M %p") %><br>
+            Duration: <%= flight.flight_duration %> minutes<br>
+            Seats requested: <%= @passengers %>
+        </li>
+        <% end %>
+    </ul>
+    <% else %>
+    <p>No flights found matching your criteria.</p>
+    <% end %>
+<% end %>
+
+<h2>All Flights:</h2>
+
+<% @all_flights.each do |flight| %>
+  <li>Date: <%= flight.start_date.strftime("%B %d, %Y") %> Flight duration: <%= flight.flight_duration %> minutes</li>
+  <li>Departure Airport: <%= flight.departure_airport.code%></li> 
+  <li>Arrival Airport: <%= flight.arrival_airport.code%></li> 
+  <br>
+<% end %>
