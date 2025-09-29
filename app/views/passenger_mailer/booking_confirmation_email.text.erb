@@ -1,0 +1,24 @@
+Welcome to odin-flight-booker.com, <%= @passenger.name %>
+============================================================
+
+You have successfully booked your flight!
+Here are your flight details:
+
+Flight ID: <%= @booking.flight.id %>
+From: <%= @booking.flight.departure_airport.code %>
+To: <%= @booking.flight.arrival_airport.code %>
+Date: <%= @booking.flight.start_date.strftime("%B %d, %Y") %>
+Time: <%= @booking.flight.start_time.strftime("%I:%M %p") %>
+Duration: <%= @booking.flight.flight_duration %> minutes
+Passengers: <%= @booking.passengers.count %>
+
+Passenger Info:
+    <% @booking.passengers.each_with_index do |passenger, i| %>
+        Passenger <%= i + 1 %>:
+        Name: <%= passenger.name %> - Email: <%= passenger.email %>
+    <% end %>
+
+To view your booking online, just follow this link: 
+<%= @url %>.
+
+Thanks for booking your flight with us and have a great day!
